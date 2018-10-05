@@ -1,0 +1,47 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: gitlab-runner
+  namespace: gitlab
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: gitlab-runner
+    spec:
+      serviceAccountName: gitlab-sa
+      containers:
+        - name: gitlab-runner
+          image: gitlab/gitlab-runner:v1.11.1
+          command: ["/bin/bash", "/scripts/entrypoint"]
+          env:
+            - name: KUBERNETES_NAMESPACE
+              value: gitlab # Change me to the namespace you want to use
+            - name: KUBERNETES_SERVICE_ACCOUNT
+              value: gitlab-sa
+          # This references the previously specified configmap and mounts it as a file
+          volumeMounts:
+            - mountPath: /scripts
+              name: configmap
+          livenessProbe:
+            exec:
+              command: ["/usr/bin/pgrep","gitlab.*runner"]
+            initialDelaySeconds: 60
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command: ["/usr/bin/pgrep","gitlab.*runner"]
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+      restartPolicy: Always
+      volumes:
+      - configMap:
+          name: gitlab-runner-cm
+        name: configmap

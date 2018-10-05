@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gitlab-runner-cm
+  namespace: gitlab # Change to your gitlab namespace
+data:
+  entrypoint: |
+    #!/bin/bash
+
+    set -xe
+
+    cp /scripts/config.toml /etc/gitlab-runner/
+
+    # Register the runner
+    /entrypoint register \
+      --non-interactive \
+      --registration-token 'TOKEN' \
+      --url 'http://git.demo.powerupcloud.com/ci' \
+      --executor "kubernetes" \
+      --name "Kubernetes Runner" \
+      --config "/etc/gitlab-runner/config.toml" \
+      --kubernetes-privileged "true"
+
+
+    # Start the runner
+    /entrypoint run --user=gitlab-runner \
+      --working-directory=/home/gitlab-runner \
+      --config "/etc/gitlab-runner/config.toml"
+  config.toml: |
+     concurrent = 2
+     check_interval = 10
