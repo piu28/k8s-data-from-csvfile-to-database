@@ -28,7 +28,7 @@ spec:
         tier: test
     spec:
       containers:
-      - image: 612700004603.dkr.ecr.ap-south-1.amazonaws.com/demo-nginx:v4.0
+      - image: ACCOUNT.dkr.ecr.ap-south-1.amazonaws.com/demo-nginx:v4.0
         imagePullPolicy: Always
         name: demo-csvparser01
         ports:
