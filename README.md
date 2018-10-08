@@ -8,13 +8,14 @@
 - One S3 bucket to store Application Access logs using Loadbalancer.
 - MySQL RDS in private subnet.3306 port is opened to the Kubernetes Cluster Nodes.
 - Table to store the data from CSV File in supported variables. In our case, we have used the following command to create a table in database.
-    create database csvdb;
-    CREATE TABLE puc_csv(
-    sku INT, 
-    name VARCHAR(200), 
-    price DOUBLE 
-    );
-    
+```
+create database csvdb;
+CREATE TABLE puc_csv(
+  sku INT, 
+  name VARCHAR(200), 
+  price DOUBLE 
+);
+```
 ## Setup:
 - Cloud: Amazon Web Services
 - KOPS: v1.10
@@ -36,13 +37,15 @@ Replace the values for the following variable in the kubernetes-gitlab/gitlab-de
 - GITLAB_ROOT_PASSWORD
 - GITLAB_HOST
 - GITLAB_SSH_HOST
-    kubectl create -f kubernetes-gitlab/gitlab-ns.yml
-    kubectl create -f kubernetes-gitlab/postgresql-deployment.yml
-    kubectl create -f kubernetes-gitlab/postgresql-svc.yml
-    kubectl create -f kubernetes-gitlab/redis-deployment.yml
-    kubectl create -f kubernetes-gitlab/redis-svc.yml
-    kubectl create -f kubernetes-gitlab/gitlab-deployment.yml
-    kubectl create -f kubernetes-gitlab/gitlab-svc.yml
+```
+kubectl create -f kubernetes-gitlab/gitlab-ns.yml
+kubectl create -f kubernetes-gitlab/postgresql-deployment.yml
+kubectl create -f kubernetes-gitlab/postgresql-svc.yml
+kubectl create -f kubernetes-gitlab/redis-deployment.yml
+kubectl create -f kubernetes-gitlab/redis-svc.yml
+kubectl create -f kubernetes-gitlab/gitlab-deployment.yml
+kubectl create -f kubernetes-gitlab/gitlab-svc.yml
+```
 “kubectl get svc -n gitlab” will give the provisioned Loadbalancer Endpoint. Create a DNS Record for the Endpoint, for example, git.demo.powerupcloud.com.
 
 Create Gitlab Runner:
@@ -50,14 +53,17 @@ Replace the values for the following variable in the gitlab-runners/configmap.ym
 - Gitlab URL
 - Registration Token
 Go to Gitlab Runners section in the Gitlab console to get the above values.
-    kubectl create -f gitlab-runners/rbac.yaml
-    kubectl create -f gitlab-runners/configmap.yaml
-    kubectl create -f gitlab-runners/deployment.yaml
-    
+```
+kubectl create -f gitlab-runners/rbac.yaml
+kubectl create -f gitlab-runners/configmap.yaml
+kubectl create -f gitlab-runners/deployment.yaml
+```
 Create CSVParser Application:
 Create a base docker image with Nginx and php7.0 installed on it and push to ECR. Give the base image in csvparser/k8s/deployment.yaml.
-    kubectl create -f csvparser/k8s/deployment.yaml
-    kubectl create -f csvparser/k8s/service.yaml
+```
+kubectl create -f csvparser/k8s/deployment.yaml
+kubectl create -f csvparser/k8s/service.yaml
+```
 “kubectl get svc” will give the provisioned Loadbalancer Endpoint. Create a DNS Record for the Endpoint, for example, app.demo.powerupcloud.com.
 
 ## Application Functionality
